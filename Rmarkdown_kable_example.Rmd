@@ -1,0 +1,73 @@
+---
+title: "R Markdown and kableExtra"
+author: "Melanie Tierney"
+date: "11/12/2019"
+output: 
+  pdf_document:
+    keep_tex: yes
+geometry: "left=2cm,right=2cm,top=1.5cm,bottom=1.5cm"
+header-includes:
+  - \usepackage[labelformat = empty, textfont = bf]{caption}
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(echo = FALSE) #don't have code show in pdf document
+library(kableExtra)
+source("data_manipulation.R")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, MS Word documents and Beamer slides. For more details, see the [R Markdown Cheat Sheet](https://rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf) and <http://rmarkdown.rstudio.com>.
+
+As mentioned above, R Markdown can facilitate presentation of R output in a variety of ways. However, in this document we're going to focus on output in the PDF format given this is a common format used in the corporate world. We're also going to focus mainly on producing tables in our PDF with the [kableExtra package](https://www.rdocumentation.org/packages/kableExtra/versions/1.1.0). For additional information on the capabilities of kableExtra, see <https://haozhu233.github.io/kableExtra/awesome_table_in_pdf.pdf>.
+
+## kableExtra
+
+The tables below are produced with the `kable()` function. The brexit poll and murders data are pulled into an R script where they are manipulated and formatted to include appropriate columns, commas and percents. The data are then sourced into the Rmarkdown script and sorted based on their factor columns. In the polls table, the columns are grouped using the `add_column_above()` function and the rows are grouped using the `pack_rows()` function. Two footnotes are included at the bottom of the table. In the murders table, if the murders as a % of population is greater than 0.004%, the value is highlighted in orange using the `cell_spec()` function. Using `pack_rows()` the table is grouped by region. Other customized styling in the tables includes borders, the stripe index, font size and bolding. The *Table #* prefix is removed from all tables in the report by putting `\usepackage[labelformat = empty]{caption}` in the YAML header. 
+
+```{r, polltab, results='asis', warning=FALSE, fig.pos='!H'}
+polls_data$poll_type <- factor(polls_data$poll_type, levels = c("Online", "Telephone"))
+
+polls_data[with(polls_data, order(poll_type)), -1] %>%
+  mutate_at(vars(avg_remain, avg_leave, avg_undecided), funs(gsub("%", "\\\\%", .))) %>%
+  kable(col.names = c(" ", "Remain", "Leave", "Undecided"), 
+        row.names = FALSE, caption = "Brexit Poll Data", align = "c", 'latex', 
+        booktabs = T, escape = F, linesep = "") %>%
+  add_header_above(c("Pollster", "Poll Responses" = 3)) %>%
+  column_spec(1, width = "6cm", border_left = T, border_right = T) %>%
+  column_spec(c(2:3), width = "2.5cm") %>%
+  column_spec(c(4), width = "2.5cm", border_right = T) %>%
+  pack_rows("Online", 1, 12) %>%
+  pack_rows("Telephone", 13, 22) %>%
+  kable_styling(latex_options = c("HOLD_position", "striped"), stripe_index = c(1:12, 13:22), font_size = 8) %>%
+  footnote(general = c("Note: The poll responses are an average of the responses gathered by each pollster across all
+  dates.", "Note: Dataset is from the dslabs package in R."), fixed_small_size = T, threeparttable = T, 
+  general_title = c("", ""), escape = F)
+```
+
+
+```{r, murderstab, results='asis', warning=FALSE, fig.pos='!H'}
+murders_table$region <- factor(murders_table$region, levels = c("North Central", "Northeast", "South", "West"))
+
+murders_table[with(murders_table, order(region)),] %>%
+  mutate(murders_perc_pop = cell_spec(murders_perc_pop, 
+                                      background = ifelse(as.numeric(stringr::str_sub(murders_perc_pop, end = -2L)) >=
+                                                        0.004, '#ff9a1a', 'gray!6'))) %>%
+  select(state, population, total, murders_perc_pop) %>%
+  kable(col.names = c("State", "Population", "Total Murders", "Total Murders as \\% of Population"), 
+        row.names = FALSE, caption = "U.S. Gun Murders By State for 2010", align = "c", 'latex', 
+        booktabs = T, escape = F, linesep = "") %>%
+  column_spec(1, width = "6cm", bold = T, border_left = T, border_right = T) %>%
+  column_spec(c(2:4), width = "3cm", border_right = T) %>%
+  pack_rows("North Central", 1, 12) %>%
+  pack_rows("Northeast", 13, 21) %>%
+  pack_rows("South", 22, 38) %>%
+  pack_rows("West", 39, 51) %>%
+  kable_styling(latex_options = c("HOLD_position", "striped"), stripe_index = c(1:12, 13:21, 22:38, 39:51), font_size = 8)
+```
+
+
+
+

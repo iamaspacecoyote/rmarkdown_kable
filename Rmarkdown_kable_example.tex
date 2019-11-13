@@ -1,0 +1,268 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[left=2cm,right=2cm,top=1.5cm,bottom=1.5cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={R Markdown and kableExtra},
+            pdfauthor={Melanie Tierney},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{R Markdown and kableExtra}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Melanie Tierney}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{11/12/2019}
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+\usepackage[labelformat = empty, textfont = bf]{caption}
+
+\begin{document}
+\maketitle
+
+\hypertarget{r-markdown}{%
+\subsection{R Markdown}\label{r-markdown}}
+
+This is an R Markdown document. Markdown is a simple formatting syntax
+for authoring HTML, PDF, MS Word documents and Beamer slides. For more
+details, see the
+\href{https://rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf}{R
+Markdown Cheat Sheet} and \url{http://rmarkdown.rstudio.com}.
+
+As mentioned above, R Markdown can facilitate presentation of R output
+in a variety of ways. However, in this document we're going to focus on
+output in the PDF format given this is a common format used in the
+corporate world. We're also going to focus mainly on producing tables in
+our PDF with the
+\href{https://www.rdocumentation.org/packages/kableExtra/versions/1.1.0}{kableExtra
+package}. For additional information on the capabilities of kableExtra,
+see
+\url{https://haozhu233.github.io/kableExtra/awesome_table_in_pdf.pdf}.
+
+\hypertarget{kableextra}{%
+\subsection{kableExtra}\label{kableextra}}
+
+The tables below are produced with the \texttt{kable()} function. The
+brexit poll and murders data are pulled into an R script where they are
+manipulated and formatted to include appropriate columns, commas and
+percents. The data are then sourced into the Rmarkdown script and sorted
+based on their factor columns. In the polls table, the columns are
+grouped using the \texttt{add\_column\_above()} function and the rows
+are grouped using the \texttt{pack\_rows()} function. Two footnotes are
+included at the bottom of the table. In the murders table, if the
+murders as a \% of population is greater than 0.004\%, the value is
+highlighted in orange using the \texttt{cell\_spec()} function. Using
+\texttt{pack\_rows()} the table is grouped by region. Other customized
+styling in the tables includes borders, the stripe index, font size and
+bolding. The \emph{Table \#} prefix is removed from all tables in the
+report by putting
+\texttt{\textbackslash{}usepackage{[}labelformat\ =\ empty{]}\{caption\}}
+in the YAML header.
+
+\begin{table}[H]
+
+\caption{\label{tab:polltab}Brexit Poll Data}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{|>{\centering\arraybackslash}p{6cm}|>{\centering\arraybackslash}p{2.5cm}>{\centering\arraybackslash}p{2.5cm}>{\centering\arraybackslash}p{2.5cm}|}
+\toprule
+\multicolumn{1}{c}{Pollster} & \multicolumn{3}{c}{Poll Responses} \\
+\cmidrule(l{3pt}r{3pt}){1-1} \cmidrule(l{3pt}r{3pt}){2-4}
+  & Remain & Leave & Undecided\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Online}}\\
+\rowcolor{gray!6}  \hspace{1em}BMG Research & 41.2\% & 43.3\% & 15.7\%\\
+\rowcolor{gray!6}  \hspace{1em}Greenberg Quinlan Rosner Research & 45.0\% & 40.0\% & 16.0\%\\
+\rowcolor{gray!6}  \hspace{1em}ICM & 42.8\% & 43.3\% & 13.8\%\\
+\rowcolor{gray!6}  \hspace{1em}Opinium & 42.2\% & 42.2\% & 14.6\%\\
+\rowcolor{gray!6}  \hspace{1em}ORB & 49.0\% & 51.0\% & 0.0\%\\
+\rowcolor{gray!6}  \hspace{1em}Panelbase & 42.0\% & 45.0\% & 12.0\%\\
+\rowcolor{gray!6}  \hspace{1em}Populus & 55.0\% & 45.0\% & 0.0\%\\
+\rowcolor{gray!6}  \hspace{1em}Populus/Number Cruncher Politics & 43.5\% & 45.0\% & 12.5\%\\
+\rowcolor{gray!6}  \hspace{1em}Survation & 38.0\% & 40.0\% & 22.0\%\\
+\rowcolor{gray!6}  \hspace{1em}TNS & 38.1\% & 39.2\% & 22.8\%\\
+\rowcolor{gray!6}  \hspace{1em}YouGov & 41.4\% & 41.1\% & 13.8\%\\
+\rowcolor{gray!6}  \hspace{1em}YouGov/The Times & 36.0\% & 45.0\% & 19.0\%\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Telephone}}\\
+\rowcolor{gray!6}  \hspace{1em}BMG Research & 46.0\% & 43.0\% & 11.0\%\\
+\rowcolor{gray!6}  \hspace{1em}ComRes & 49.8\% & 40.9\% & 9.4\%\\
+\rowcolor{gray!6}  \hspace{1em}ICM & 45.5\% & 43.8\% & 11.2\%\\
+\rowcolor{gray!6}  \hspace{1em}Ipsos MORI & 50.6\% & 40.6\% & 6.6\%\\
+\rowcolor{gray!6}  \hspace{1em}ORB & 51.0\% & 44.6\% & 4.4\%\\
+\rowcolor{gray!6}  \hspace{1em}ORB/Telegraph & 53.0\% & 46.0\% & 2.0\%\\
+\rowcolor{gray!6}  \hspace{1em}Populus/Number Cruncher Politics & 48.5\% & 36.0\% & 15.0\%\\
+\rowcolor{gray!6}  \hspace{1em}Survation & 44.5\% & 38.3\% & 17.2\%\\
+\rowcolor{gray!6}  \hspace{1em}Survation/IG Group & 45.0\% & 44.0\% & 11.0\%\\
+\rowcolor{gray!6}  \hspace{1em}YouGov & 36.0\% & 39.0\% & 22.0\%\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item Note: The poll responses are an average of the responses gathered by each pollster across all
+  dates.
+\item Note: Dataset is from the dslabs package in R.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:murderstab}U.S. Gun Murders By State for 2010}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{|>{\bfseries\centering\arraybackslash}p{6cm}|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{3cm}|}
+\toprule
+State & Population & Total Murders & Total Murders as \% of Population\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{North Central}}\\
+\rowcolor{gray!6}  \hspace{1em}Illinois & 12,830,632 & 364 & \cellcolor{gray!6}{0.0028\%}\\
+\rowcolor{gray!6}  \hspace{1em}Indiana & 6,483,802 & 142 & \cellcolor{gray!6}{0.0022\%}\\
+\rowcolor{gray!6}  \hspace{1em}Iowa & 3,046,355 & 21 & \cellcolor{gray!6}{0.0007\%}\\
+\rowcolor{gray!6}  \hspace{1em}Kansas & 2,853,118 & 63 & \cellcolor{gray!6}{0.0022\%}\\
+\rowcolor{gray!6}  \hspace{1em}Michigan & 9,883,640 & 413 & \cellcolor[HTML]{ff9a1a}{0.0042\%}\\
+\rowcolor{gray!6}  \hspace{1em}Minnesota & 5,303,925 & 53 & \cellcolor{gray!6}{0.0010\%}\\
+\rowcolor{gray!6}  \hspace{1em}Missouri & 5,988,927 & 321 & \cellcolor[HTML]{ff9a1a}{0.0054\%}\\
+\rowcolor{gray!6}  \hspace{1em}Nebraska & 1,826,341 & 32 & \cellcolor{gray!6}{0.0018\%}\\
+\rowcolor{gray!6}  \hspace{1em}North Dakota & 672,591 & 4 & \cellcolor{gray!6}{0.0006\%}\\
+\rowcolor{gray!6}  \hspace{1em}Ohio & 11,536,504 & 310 & \cellcolor{gray!6}{0.0027\%}\\
+\rowcolor{gray!6}  \hspace{1em}South Dakota & 814,180 & 8 & \cellcolor{gray!6}{0.0010\%}\\
+\rowcolor{gray!6}  \hspace{1em}Wisconsin & 5,686,986 & 97 & \cellcolor{gray!6}{0.0017\%}\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Northeast}}\\
+\rowcolor{gray!6}  \hspace{1em}Connecticut & 3,574,097 & 97 & \cellcolor{gray!6}{0.0027\%}\\
+\rowcolor{gray!6}  \hspace{1em}Maine & 1,328,361 & 11 & \cellcolor{gray!6}{0.0008\%}\\
+\rowcolor{gray!6}  \hspace{1em}Massachusetts & 6,547,629 & 118 & \cellcolor{gray!6}{0.0018\%}\\
+\rowcolor{gray!6}  \hspace{1em}New Hampshire & 1,316,470 & 5 & \cellcolor{gray!6}{0.0004\%}\\
+\rowcolor{gray!6}  \hspace{1em}New Jersey & 8,791,894 & 246 & \cellcolor{gray!6}{0.0028\%}\\
+\rowcolor{gray!6}  \hspace{1em}New York & 19,378,102 & 517 & \cellcolor{gray!6}{0.0027\%}\\
+\rowcolor{gray!6}  \hspace{1em}Pennsylvania & 12,702,379 & 457 & \cellcolor{gray!6}{0.0036\%}\\
+\rowcolor{gray!6}  \hspace{1em}Rhode Island & 1,052,567 & 16 & \cellcolor{gray!6}{0.0015\%}\\
+\rowcolor{gray!6}  \hspace{1em}Vermont & 625,741 & 2 & \cellcolor{gray!6}{0.0003\%}\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{South}}\\
+\rowcolor{gray!6}  \hspace{1em}Alabama & 4,779,736 & 135 & \cellcolor{gray!6}{0.0028\%}\\
+\rowcolor{gray!6}  \hspace{1em}Arkansas & 2,915,918 & 93 & \cellcolor{gray!6}{0.0032\%}\\
+\rowcolor{gray!6}  \hspace{1em}Delaware & 897,934 & 38 & \cellcolor[HTML]{ff9a1a}{0.0042\%}\\
+\rowcolor{gray!6}  \hspace{1em}District of Columbia & 601,723 & 99 & \cellcolor[HTML]{ff9a1a}{0.0165\%}\\
+\rowcolor{gray!6}  \hspace{1em}Florida & 19,687,653 & 669 & \cellcolor{gray!6}{0.0034\%}\\
+\rowcolor{gray!6}  \hspace{1em}Georgia & 9,920,000 & 376 & \cellcolor{gray!6}{0.0038\%}\\
+\rowcolor{gray!6}  \hspace{1em}Kentucky & 4,339,367 & 116 & \cellcolor{gray!6}{0.0027\%}\\
+\rowcolor{gray!6}  \hspace{1em}Louisiana & 4,533,372 & 351 & \cellcolor[HTML]{ff9a1a}{0.0077\%}\\
+\rowcolor{gray!6}  \hspace{1em}Maryland & 5,773,552 & 293 & \cellcolor[HTML]{ff9a1a}{0.0051\%}\\
+\rowcolor{gray!6}  \hspace{1em}Mississippi & 2,967,297 & 120 & \cellcolor[HTML]{ff9a1a}{0.0040\%}\\
+\rowcolor{gray!6}  \hspace{1em}North Carolina & 9,535,483 & 286 & \cellcolor{gray!6}{0.0030\%}\\
+\rowcolor{gray!6}  \hspace{1em}Oklahoma & 3,751,351 & 111 & \cellcolor{gray!6}{0.0030\%}\\
+\rowcolor{gray!6}  \hspace{1em}South Carolina & 4,625,364 & 207 & \cellcolor[HTML]{ff9a1a}{0.0045\%}\\
+\rowcolor{gray!6}  \hspace{1em}Tennessee & 6,346,105 & 219 & \cellcolor{gray!6}{0.0035\%}\\
+\rowcolor{gray!6}  \hspace{1em}Texas & 25,145,561 & 805 & \cellcolor{gray!6}{0.0032\%}\\
+\rowcolor{gray!6}  \hspace{1em}Virginia & 8,001,024 & 250 & \cellcolor{gray!6}{0.0031\%}\\
+\rowcolor{gray!6}  \hspace{1em}West Virginia & 1,852,994 & 27 & \cellcolor{gray!6}{0.0015\%}\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{West}}\\
+\rowcolor{gray!6}  \hspace{1em}Alaska & 710,231 & 19 & \cellcolor{gray!6}{0.0027\%}\\
+\rowcolor{gray!6}  \hspace{1em}Arizona & 6,392,017 & 232 & \cellcolor{gray!6}{0.0036\%}\\
+\rowcolor{gray!6}  \hspace{1em}California & 37,253,956 & 1,257 & \cellcolor{gray!6}{0.0034\%}\\
+\rowcolor{gray!6}  \hspace{1em}Colorado & 5,029,196 & 65 & \cellcolor{gray!6}{0.0013\%}\\
+\rowcolor{gray!6}  \hspace{1em}Hawaii & 1,360,301 & 7 & \cellcolor{gray!6}{0.0005\%}\\
+\rowcolor{gray!6}  \hspace{1em}Idaho & 1,567,582 & 12 & \cellcolor{gray!6}{0.0008\%}\\
+\rowcolor{gray!6}  \hspace{1em}Montana & 989,415 & 12 & \cellcolor{gray!6}{0.0012\%}\\
+\rowcolor{gray!6}  \hspace{1em}Nevada & 2,700,551 & 84 & \cellcolor{gray!6}{0.0031\%}\\
+\rowcolor{gray!6}  \hspace{1em}New Mexico & 2,059,179 & 67 & \cellcolor{gray!6}{0.0033\%}\\
+\rowcolor{gray!6}  \hspace{1em}Oregon & 3,831,074 & 36 & \cellcolor{gray!6}{0.0009\%}\\
+\rowcolor{gray!6}  \hspace{1em}Utah & 2,763,885 & 22 & \cellcolor{gray!6}{0.0008\%}\\
+\rowcolor{gray!6}  \hspace{1em}Washington & 6,724,540 & 93 & \cellcolor{gray!6}{0.0014\%}\\
+\rowcolor{gray!6}  \hspace{1em}Wyoming & 563,626 & 5 & \cellcolor{gray!6}{0.0009\%}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\end{document}
